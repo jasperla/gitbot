@@ -55,7 +55,7 @@
   (def gitbot (xmpp/start-bot config reload-helper)))
 
 (defn -main
-  [& args]
+  [args]
   (let [parsed-args (cli args
                          ["--password" "password to authenticate with on the remote server"]
                          ["--username" "username (default: gitbot-clj@jabber.org"]
