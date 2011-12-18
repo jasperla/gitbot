@@ -4,4 +4,5 @@
                  [org.clojure/tools.cli "0.2.1"]
                  [xmpp-clj "0.2.1"]
                  [tentacles "0.1.3"]]
+  :dev-dependencies [[swank-clojure "1.3.4-SNAPSHOT"]]
   :main gitbot.core)
