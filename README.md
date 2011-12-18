@@ -18,4 +18,5 @@ At this point the bot is running and can be interacted with.
 
 Copyright (C) 2011 Jasper Lievisse Adriaanse <jasper@humppa.nl>
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Distributed under the Eclipse Public License, the same as Clojure
+(see the file COPYING).
