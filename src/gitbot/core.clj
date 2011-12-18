@@ -10,6 +10,7 @@
   gitbot.core
   (:use clojure.tools.cli)
   (:require [gitbot.config :as conf]
+            [clojure.string :only blank? :as string]
             [xmpp-clj :as xmpp]
             [tentacles.core :as t]
             [tentacles.users :as u]))
@@ -28,19 +29,20 @@
   (let [response (u/user user)]
     response))
 
-(defn handle-message [message]
+(defn message-handler [message]
   (let [body (:body message)
-        from-user (:from-name message)
-        response (if (empty? body) nil (get-user-info body))]
-    (if (valid? response)
-      response
-      (str "User " body " is not a valid github user"))))
+        from-user (:from-name message)]
+    (when (not (string/blank? body))
+      (let [response (if (empty? body) nil (get-user-info body))]
+        (if (valid? response)
+          response
+          (str "User " body " is not a valid github user"))))))
 
 ;; Helper so we don't have to restart with every change,
 ;; just (use 'gitbot.core :reload) and (reload) does the trick.
 (defn reload-helper [message]
   (try
-    (handle-message message)
+    (message-handler message)
     (catch Exception e (println e))))
 
 (declare gitbot)
