@@ -10,48 +10,37 @@
   gitbot.core
   (:use clojure.tools.cli)
   (:require [gitbot.config :as conf]
-            [clojure.string :only blank? :as string]
-            [xmpp-clj :as xmpp]
-            [tentacles.core :as t]
-            [tentacles.users :as u]))
+            [gitbot.commands :as cmd]
+            [clojure.string :only (blank? split) :as string]
+            [xmpp-clj :as xmpp]))
 
-(defn valid?
-  "Quick check to see if our request was valid and got a proper response."
-  [r]
-  (when (not= (:status r) 404)
-    true))
-
-;; move the checking if it's a valid user from handle-message
-;; to here so we can return either info or nil, which is easier
-;; to check for later on.
-(defn get-user-info
-  [user]
-  (let [response (u/user user)]
-    response))
-
-(defn message-handler [message]
+(defn- message-handler
+  [message]
   (let [body (:body message)
         from-user (:from-name message)]
     (when (not (string/blank? body))
-      (let [response (if (empty? body) nil (get-user-info body))]
-        (if (valid? response)
-          response
-          (str "User " body " is not a valid github user"))))))
+      (let [msg (string/split body #" ")]
+        (case (first msg)
+          "get" (cmd/get (rest msg))
+          (str "Invalid command: " msg))))))
 
 ;; Helper so we don't have to restart with every change,
 ;; just (use 'gitbot.core :reload) and (reload) does the trick.
-(defn reload-helper [message]
+(defn- reload-helper
+  [message]
   (try
     (message-handler message)
     (catch Exception e (println e))))
 
 (declare gitbot)
 
-(defn reload [config]
+(defn reload
+  [config]
   (xmpp/stop-bot gitbot)
   (def gitbot (xmpp/start-bot config reload-helper)))
 
-(defn start [config]
+(defn start
+  [config]
   (def gitbot (xmpp/start-bot config reload-helper)))
 
 (defn -main
