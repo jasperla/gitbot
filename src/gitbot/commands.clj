@@ -33,8 +33,7 @@
 (defn- valid?
   "Quick check to see if our request was valid and got a proper response."
   [r]
-  (when (not= (:status r) 404)
-    true))
+  (not= (:status r) 404))
 
 (defn- get-user
   [s]
@@ -53,7 +52,7 @@
     (str "Invalid GET command: " s)))
 
 (defn login
-  "Allow a user to login (or currently rather store their credentials in memory).
+  "Allow a user to log in (or currently rather store their credentials in memory).
    Note that the provided credentials are not checked right now."
   [s]
   (if (= (count s) 2)
