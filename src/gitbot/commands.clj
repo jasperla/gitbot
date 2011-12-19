@@ -10,7 +10,8 @@
   gitbot.commands
   (:refer-clojure :exclude [get])
   (:use clojure.tools.cli)
-  (:require [clojure.string :only (blank? split) :as string]
+  (:require [gitbot.config :as config]
+            [clojure.string :only (blank? split) :as string]
             [clojure.pprint :only (pprint) :as pp]
             [tentacles.users :as u]
             ;[gitbot.parser :as parser]
@@ -37,8 +38,8 @@
 
 (defn- get-user
   [s]
-    (when (not (empty? s))
-    (do-cmd (u/user (first s)))))
+  (when (not (empty? s))
+    (-> (first s) u/user do-cmd)))
 
 ;; Dispatch the command to the appropriate function. Most stuff will be returned pprinted.
 ;; The dashboard command to show recent news will need to go through the parser, also to
@@ -48,4 +49,15 @@
   ;(str "Got the GET command: " s)
   (case (first s)
     "user" (get-user (rest s))
+    "credentials" (str config/credentials)
     (str "Invalid GET command: " s)))
+
+(defn login
+  "Allow a user to login (or currently rather store their credentials in memory).
+   Note that the provided credentials are not checked right now."
+  [s]
+  (if (= (count s) 2)
+    (do
+      (config/save-credentials {:auth (str (first s) ":" (second s))})
+      (str "Stored login credentials."))
+    (str "Invalid number of arguments passed. 2 are required (username password).")))

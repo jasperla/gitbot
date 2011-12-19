@@ -22,6 +22,7 @@
       (let [msg (string/split body #" ")]
         (case (first msg)
           "get" (cmd/get (rest msg))
+          "login" (cmd/login (rest msg))
           (str "Invalid command: " msg))))))
 
 ;; Helper so we don't have to restart with every change,

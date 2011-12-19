@@ -14,6 +14,13 @@
                :host "jabber.org"
                :domain "jabber.org"})
 
+;; Define an empty map into which we'll merge user credentials later on.
+(def credentials {})
+
+(defn save-credentials
+  [auth]
+  (def credentials (merge credentials auth)))
+
 (defn get-connection-config
   "Merge the default configuration into a map of cli options (without nil fields)."
   [args]
